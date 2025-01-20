@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statystyki Wypożyczeń</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Statystyki Wypożyczeń</h1>
+
+        <!-- Przycisk powrotu -->
+        <button onclick="window.location.href='/cars'">Powrót na stronę główną</button>
+
+    <% if (error) { %>
+        <div class="error-message" style="color: red; font-weight: bold; margin-bottom: 20px;">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <!-- Tabela z danymi -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID Samochodu</th>
+                <th>Marka</th>
+                <th>Model</th>
+                <th>Numer Rejestracyjny</th>
+                <th>Liczba Wypożyczeń</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% stats.forEach(row => { %>
+                <tr>
+                    <td><%= row.samochod_id %></td>
+                    <td><%= row.marka %></td>
+                    <td><%= row.model %></td>
+                    <td><%= row.numer_rejestracyjny %></td>
+                    <td><%= row.liczba_wypozyczen %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+</body>
+</html>

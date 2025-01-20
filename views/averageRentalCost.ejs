@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Średni koszt wynajmu</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Średni koszt wynajmu klientów</h1>
+
+    <% if (error) { %>
+        <div class="error-message" style="color: red; font-weight: bold; margin-bottom: 20px;">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <!-- Przycisk powrotu -->
+    <button onclick="window.location.href='/clients'">Powrót do listy klientów</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Średni koszt wynajmu</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% averages.forEach(row => { %>
+                <tr>
+                    <td><%= row.imie %></td>
+                    <td><%= row.nazwisko %></td>
+                    <td>
+                        <% if (row.srednikoszt !== null) { %>
+                            <%= parseFloat(row.srednikoszt).toFixed(2) + ' zł' %>
+                        <% } else { %>
+                            Brak danych
+                        <% } %>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+        
+    </table>
+</body>
+</html>

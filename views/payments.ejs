@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Płatności</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Lista Płatności</h1>
+
+    <!-- Przycisk do powrotu na stronę główną -->
+    <button onclick="window.location.href='/home'">Powrót na stronę główną</button>
+
+    <!-- Formularz dodawania nowej płatności -->
+    <h2>Dodaj nową płatność</h2>
+    <form action="/payments/add" method="POST">
+        <label for="id_wypożyczenia">ID wypożyczenia:</label>
+        <input type="number" id="id_wypożyczenia" name="id_wypożyczenia" required><br>
+        <label for="kwota">Kwota:</label>
+        <input type="number" step="0.01" id="kwota" name="kwota" required><br>
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" required><br>
+        <label for="metoda_płatności">Metoda płatności:</label>
+        <input type="text" id="metoda_płatności" name="metoda_płatności" required><br>
+        <button type="submit">Zapisz</button>
+    </form>
+
+    <!-- Sekcja z listą płatności -->
+    <h2>Lista płatności</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID wypożyczenia</th>
+                <th>Kwota</th>
+                <th>Data</th>
+                <th>Metoda płatności</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% payments.forEach(payment => { %>
+                <tr>
+                    <td><%= payment.id %></td>
+                    <td><%= payment.id_wypożyczenia %></td>
+                    <td><%= payment.kwota %></td>
+                    <td><%= payment.data %></td>
+                    <td><%= payment.metoda_płatności %></td>
+                    <td>
+                        <!-- Przycisk do edytowania płatności -->
+                        <button onclick="editPayment('<%= payment.id %>', '<%= payment.id_wypożyczenia %>', '<%= payment.kwota %>', '<%= payment.data %>', '<%= payment.metoda_płatności %>')">Edytuj</button>
+                        <!-- Link do usuwania płatności -->
+                        <a href="/payments/delete/<%= payment.id %>">Usuń</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formularz edytowania płatności (po kliknięciu "Edytuj") -->
+    <h2>Edytuj płatność</h2>
+    <form id="editForm" action="" method="POST" style="display: none;">
+        <input type="hidden" id="editId" name="id">
+        <label for="editId_wypożyczenia">ID wypożyczenia:</label>
+        <input type="number" id="editId_wypożyczenia" name="id_wypożyczenia" required><br>
+        <label for="editKwota">Kwota:</label>
+        <input type="number" step="0.01" id="editKwota" name="kwota" required><br>
+        <label for="editData">Data:</label>
+        <input type="date" id="editData" name="data" required><br>
+        <label for="editMetoda_płatności">Metoda płatności:</label>
+        <input type="text" id="editMetoda_płatności" name="metoda_płatności" required><br>
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+
+    <script>
+        // Funkcja do załadowania formularza edytowania
+        function editPayment(id, id_wypożyczenia, kwota, data, metoda_płatności) {
+            document.getElementById("editForm").style.display = "block"; // Pokaż formularz edycji
+            document.getElementById("editId").value = id;
+            document.getElementById("editId_wypożyczenia").value = id_wypożyczenia;
+            document.getElementById("editKwota").value = kwota;
+            document.getElementById("editData").value = data;
+            document.getElementById("editMetoda_płatności").value = metoda_płatności;
+
+            // Zmieniamy akcję formularza na edytowanie
+            document.getElementById("editForm").action = "/payments/edit/" + id;
+        }
+    </script>
+</body>
+</html>

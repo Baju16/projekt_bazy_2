@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wypożyczenia</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <style>
+        /* Dodaj styl dla układu poziomego */
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .form-container, .average-container {
+            width: 48%;
+        }
+        .average-container {
+            margin-left: 2%;
+        }
+        /* Styl dla komunikatu o błędzie */
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista Wypożyczeń</h1>
+
+    <!-- Komunikat o błędzie -->
+    <% if (error) { %>
+        <div class="error-message">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <!-- Przycisk do powrotu na stronę główną -->
+    <button onclick="window.location.href='/home'">Powrót na stronę główną</button>
+
+    <!-- Kontener dla formularza i średniej liczby dni wypożyczenia -->
+    <div class="container">
+        <!-- Formularz dodawania nowego wypożyczenia -->
+        <div class="form-container">
+            <h2>Dodaj nowe wypożyczenie</h2>
+            <!-- Formularz dodawania nowego wypożyczenia -->
+            <form action="/rentals/add" method="POST">
+                <label for="id_samochodu">ID Samochodu:</label>
+                <input type="number" id="id_samochodu" name="id_samochodu" required><br>
+                <label for="id_klienta">ID Klienta:</label>
+                <input type="number" id="id_klienta" name="id_klienta" required><br>
+                <label for="data_wypozyczenia">Data Wypożyczenia:</label>
+                <input type="date" id="data_wypozyczenia" name="data_wypozyczenia" required><br>
+                <label for="data_zwrotu">Data Zwrotu:</label>
+                <input type="date" id="data_zwrotu" name="data_zwrotu" required><br>
+                <button type="submit">Zapisz</button>
+            </form>
+
+        </div>
+
+        <!-- Sekcja z wyświetlaniem średniej liczby dni wypożyczenia -->
+        <div class="average-container">
+            <h2>Średnia liczba dni wypożyczenia</h2>
+            <p id="averageRentalDays">Ładowanie...</p>
+        </div>
+    </div>
+
+    <!-- Sekcja z listą wypożyczeń -->
+    <h2>Lista wypożyczeń</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Samochodu</th>
+                <th>ID Klienta</th>
+                <th>Data Wypożyczenia</th>
+                <th>Data Zwrotu</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% rentals.forEach(rental => { %>
+                <tr>
+                    <td><%= rental.id %></td>
+                    <td><%= rental.id_samochodu %></td>
+                    <td><%= rental.id_klienta %></td>
+                    <td><%= rental.data_wypozyczenia %></td>
+                    <td><%= rental.data_zwrotu ? rental.data_zwrotu : 'Brak' %></td>
+                    <td>
+                        <!-- Przycisk do edytowania wypożyczenia -->
+                        <button onclick="editRental('<%= rental.id %>', '<%= rental.id_samochodu %>', '<%= rental.id_klienta %>', '<%= rental.data_wypozyczenia %>', '<%= rental.data_zwrotu %>')">Edytuj</button>
+                        <!-- Link do usuwania wypożyczenia -->
+                        <a href="/rentals/delete/<%= rental.id %>">Usuń</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formularz edytowania wypożyczenia (po kliknięciu "Edytuj") -->
+    <h2>Edytuj wypożyczenie</h2>
+    <!-- Formularz edytowania wypożyczenia (po kliknięciu "Edytuj") -->
+    <form id="editForm" action="" method="POST" style="display: none;">
+        <input type="hidden" id="editId" name="id">
+        <label for="editId_samochodu">ID Samochodu:</label>
+        <input type="number" id="editId_samochodu" name="id_samochodu" required><br>
+        <label for="editId_klienta">ID Klienta:</label>
+        <input type="number" id="editId_klienta" name="id_klienta" required><br>
+        <label for="editData_wypozyczenia">Data Wypożyczenia:</label>
+        <input type="date" id="editData_wypozyczenia" name="data_wypozyczenia" required><br>
+        <label for="editData_zwrotu">Data Zwrotu:</label>
+        <input type="date" id="editData_zwrotu" name="data_zwrotu" required><br>
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+
+
+    <script>
+        async function fetchAverageRentalDays() {
+            try {
+                const response = await fetch('/rentals/average-rental-days');
+                if (!response.ok) {
+                    throw new Error('Błąd sieci');
+                }
+                const data = await response.json();
+                if (data.average_days === undefined) {
+                    throw new Error('Niepoprawne dane');
+                }
+                document.getElementById('averageRentalDays').textContent = parseFloat(data.average_days).toFixed(2);
+            } catch (error) {
+                console.error('Błąd podczas pobierania średniej liczby dni wypożyczenia:', error);
+                document.getElementById('averageRentalDays').textContent = 'Błąd ładowania danych';
+            }
+        }
+
+        // Załaduj średnią liczbę dni wypożyczenia po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', fetchAverageRentalDays);
+
+        // Funkcja do załadowania formularza edytowania
+        function editRental(id, id_samochodu, id_klienta, data_wypozyczenia, data_zwrotu) {
+            document.getElementById("editForm").style.display = "block"; // Pokaż formularz edycji
+            document.getElementById("editId").value = id;
+            document.getElementById("editId_samochodu").value = id_samochodu;
+            document.getElementById("editId_klienta").value = id_klienta;
+            document.getElementById("editData_wypozyczenia").value = data_wypozyczenia;
+            document.getElementById("editData_zwrotu").value = data_zwrotu;
+
+            // Zmieniamy akcję formularza na edytowanie
+            document.getElementById("editForm").action = "/rentals/edit/" + id;
+        }
+    </script>
+</body>
+</html>

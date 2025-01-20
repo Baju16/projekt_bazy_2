@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przeglądy</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-column {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .right-column {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista Przeglądów</h1>
+
+    <% if (error) { %>
+        <div class="error-message" style="color: red; font-weight: bold; margin-bottom: 20px;">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <button onclick="window.location.href='/home'">Powrót na stronę główną</button>
+
+    <div class="container">
+        <div class="left-column">
+            <h2>Dodaj nowy przegląd</h2>
+            <form action="/inspections/add" method="POST">
+                <label for="id_samochodu">ID Samochodu:</label>
+                <input type="number" id="id_samochodu" name="id_samochodu" required><br>
+                <label for="data_przeglądu">Data przeglądu:</label>
+                <input type="date" id="data_przeglądu" name="data_przeglądu" required><br>
+                <label for="data_nastepnego_przegladu">Data następnego przeglądu:</label>
+                <input type="date" id="data_nastepnego_przegladu" name="data_nastepnego_przegladu"><br>
+                <label for="koszt">Koszt:</label>
+                <input type="number" step="0.01" id="koszt" name="koszt"><br>
+                <button type="submit">Zapisz</button>
+            </form>
+        </div>
+
+        <div class="right-column">
+            <% if (carsNextInspection && carsNextInspection.length > 0) { %>
+                <h3>Samochody z następnym przeglądem w ciągu 30 dni:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Samochodu</th>
+                            <th>Marka</th>
+                            <th>Model</th>
+                            <th>Numer rejestracyjny</th>
+                            <th>Data następnego przeglądu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% carsNextInspection.forEach(car => { %>
+                            <tr>
+                                <td><%= car.id_samochodu %></td>
+                                <td><%= car.marka %></td>
+                                <td><%= car.model %></td>
+                                <td><%= car.numer_rejestracyjny %></td>
+                                <td><%= car.data_nastepnego_przegladu %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>Brak samochodów z następnym przeglądem w ciągu 30 dni.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <h2>Lista przeglądów</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Samochodu</th>
+                <th>Data przeglądu</th>
+                <th>Data następnego przeglądu</th>
+                <th>Koszt</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% inspections.forEach(item => { %>
+                <tr>
+                    <td><%= item.id %></td>
+                    <td><%= item.id_samochodu %></td>
+                    <td><%= item.data_przeglądu %></td>
+                    <td><%= item.data_nastepnego_przegladu %></td>
+                    <td><%= item.koszt %></td>
+                    <td>
+                        <button onclick="editInspection('<%= item.id %>', '<%= item.id_samochodu %>', '<%= item.data_przeglądu %>', '<%= item.data_nastepnego_przegladu %>', '<%= item.koszt %>')">Edytuj</button>
+                        <a href="/inspections/delete/<%= item.id %>">Usuń</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <h2>Edytuj przegląd</h2>
+    <form id="editForm" action="" method="POST" style="display: none;">
+        <input type="hidden" id="editId" name="id">
+        <label for="editId_samochodu">ID Samochodu:</label>
+        <input type="number" id="editId_samochodu" name="id_samochodu" required><br>
+        <label for="editData_przeglądu">Data przeglądu:</label>
+        <input type="date" id="editData_przeglądu" name="data_przeglądu" required><br>
+        <label for="editData_nastepnego_przegladu">Data następnego przeglądu:</label>
+        <input type="date" id="editData_nastepnego_przegladu" name="data_nastepnego_przegladu"><br>
+        <label for="editKoszt">Koszt:</label>
+        <input type="number" step="0.01" id="editKoszt" name="koszt"><br>
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+
+    <script>
+        function editInspection(id, id_samochodu, data_przeglądu, data_nastepnego_przegladu, koszt) {
+            document.getElementById("editForm").style.display = "block";
+            document.getElementById("editId").value = id;
+            document.getElementById("editId_samochodu").value = id_samochodu;
+            document.getElementById("editData_przeglądu").value = data_przeglądu;
+            document.getElementById("editData_nastepnego_przegladu").value = data_nastepnego_przegladu;
+            document.getElementById("editKoszt").value = koszt;
+            document.getElementById("editForm").action = "/inspections/edit/" + id;
+        }
+    </script>
+</body>
+</html>

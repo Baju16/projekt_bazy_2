@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naprawy Samochodów</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Lista Napraw Samochodów</h1>
+
+    <!-- Przycisk do powrotu na stronę główną -->
+    <button onclick="window.location.href='/home'">Powrót na stronę główną</button>
+
+    <!-- Formularz dodawania nowej naprawy -->
+    <h2>Dodaj nową naprawę</h2>
+    <form action="/repairs/add" method="POST">
+        <label for="car_id">ID samochodu:</label>
+        <input type="number" id="car_id" name="car_id" required><br>
+        <label for="rodzaj_naprawy">Rodzaj naprawy:</label>
+        <textarea id="rodzaj_naprawy" name="rodzaj_naprawy" required></textarea><br>
+        <label for="data_naprawy">Data naprawy:</label>
+        <input type="date" id="data_naprawy" name="data_naprawy" required><br>
+        <label for="koszt">Koszt naprawy:</label>
+        <input type="number" id="koszt" name="koszt" required><br>
+        <button type="submit">Zapisz naprawę</button>
+    </form>
+
+    <!-- Sekcja z listą napraw -->
+    <h2>Lista napraw</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Samochodu</th>
+                <th>Rodzaj naprawy</th>
+                <th>Data naprawy</th>
+                <th>Koszt naprawy</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% repairs.forEach(repair => { %>
+                <tr>
+                    <td><%= repair.id_naprawy %></td>
+                    <td><%= repair.id_samochodu %></td>
+                    <td><%= repair.rodzaj_naprawy %></td>
+                    <td><%= repair.data_naprawy %></td>
+                    <td><%= repair.koszt %></td>  <!-- Zaktualizowano na "koszt" -->
+                    <td>
+                        <!-- Przycisk do edytowania naprawy -->
+                        <button onclick="editRepair('<%= repair.id_naprawy %>', '<%= repair.id_samochodu %>', '<%= repair.rodzaj_naprawy %>', '<%= repair.data_naprawy %>', '<%= repair.koszt %>')">Edytuj</button>
+                        <!-- Link do usuwania naprawy -->
+                        <a href="/repairs/delete/<%= repair.id_naprawy %>">Usuń</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formularz edytowania naprawy (po kliknięciu "Edytuj") -->
+   <!-- Formularz edytowania naprawy -->
+<h2>Edytuj naprawę</h2>
+<form id="editRepairForm" action="" method="POST" style="display: none;">
+    <input type="hidden" id="editRepairId" name="id_naprawy">
+    <label for="editCarId">ID samochodu:</label>
+    <input type="number" id="editCarId" name="car_id" required><br>
+    <label for="editRodzajNaprawy">Rodzaj naprawy:</label>
+    <textarea id="editRodzajNaprawy" name="rodzaj_naprawy" required></textarea><br>
+    <label for="editDataNaprawy">Data naprawy:</label>
+    <input type="date" id="editDataNaprawy" name="data_naprawy" required><br>
+    <label for="editKosztNaprawy">Koszt naprawy:</label>
+    <input type="number" id="editKosztNaprawy" name="koszt" required><br>  <!-- Zaktualizowano na "koszt" -->
+    <button type="submit">Zapisz zmiany</button>
+</form>
+
+
+    <script>
+        // Funkcja do załadowania formularza edytowania
+        function editRepair(id, carId, rodzajNaprawy, dataNaprawy, kosztNaprawy) {
+            document.getElementById("editRepairForm").style.display = "block"; // Pokaż formularz edycji
+            document.getElementById("editRepairId").value = id;
+            document.getElementById("editCarId").value = carId;
+            document.getElementById("editRodzajNaprawy").value = rodzajNaprawy;
+            document.getElementById("editDataNaprawy").value = dataNaprawy;
+            document.getElementById("editKosztNaprawy").value = kosztNaprawy;
+            
+            // Zmieniamy akcję formularza na edytowanie
+            document.getElementById("editRepairForm").action = "/repairs/edit/" + id;
+        }
+    </script>
+</body>
+</html>
