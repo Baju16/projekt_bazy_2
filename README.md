@@ -2,7 +2,7 @@
 
 A full-stack application with a PostgreSQL database and a Node.js backend that enables comprehensive management of a car rental business. It includes client management, car fleet tracking, rentals, payments, insurance, maintenance, and inspections.
 
-## 🗃️ Database Overview
+## Database Overview
 
 ### Main Tables:
 
