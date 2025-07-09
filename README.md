@@ -2,20 +2,6 @@
 
 A full-stack application with a PostgreSQL database and a Node.js backend that enables comprehensive management of a car rental business. It includes client management, car fleet tracking, rentals, payments, insurance, maintenance, and inspections.
 
-## Project Structure
-project/
-├── app.js # 🚀 Entry point of the app – sets up server, middleware, and routes
-├── db.js # 🗄️ Handles PostgreSQL database connection
-├── routes/ # 🛣️ API route controllers (e.g. clients, rentals, payments)
-├── views/ # 🎨 EJS templates for server-side rendering
-├── public/ # 🌐 Static assets (CSS, images, JS)
-
-vbnet
-Kopiuj
-Edytuj
-
-
-
 ## 🗃️ Database Overview
 
 ### Main Tables:
@@ -35,7 +21,7 @@ Edytuj
 - One rental → Many payments  
 - One insurance policy → One car
 
-## ⚙️ Key Features
+## Key Features
 
 - **Client Operations**: Add, edit, delete, and retrieve clients.
 - **Car Management**: Track availability, status, repairs, and inspection schedules.
@@ -44,7 +30,7 @@ Edytuj
 - **Automated Triggers & Procedures**: For rentals, payments, data consistency.
 - **Statistics**: Rental frequency, average cost, income summaries, etc.
 
-## 🛠️ PostgreSQL Functions & Procedures
+## PostgreSQL Functions & Procedures
 
 - `dodajklienta`, `edytujklienta`, `usunklienta` – Manage clients
 - `liczba_wypozyczen`, `suma_przychodow(start, end)` – Reports and stats
@@ -54,11 +40,11 @@ Edytuj
   - `trigger_sprawdz_ubezpieczenie` (insurance validation)
   - `trg_sprawdz_przeglad` (inspection check)
 
-## 📸 ERD Diagram
+## ERD Diagram
 
 ![ERD Diagram](diagram.drawio.png)  
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Requirements
 
